@@ -50,4 +50,3 @@ assert(new Boolean(ws.send_if_open("hi!")), "ws is close => should not send => n
 > In future the additional under-the-hood protections, may be options should be created to handle or auto-handle such situations.
 
 [see code](./mod.ts)
-
