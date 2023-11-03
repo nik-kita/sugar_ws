@@ -1,4 +1,4 @@
-export const VERSION = "0.1.3";
+export const VERSION = "0.1.4";
 
 /** `prepublish` will be invoked before publish, return `false` to prevent the publish */
 // deno-lint-ignore require-await
