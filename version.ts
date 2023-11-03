@@ -1,11 +1,13 @@
-export const VERSION = '0.1.2';
+export const VERSION = "0.1.2";
 
 /** `prepublish` will be invoked before publish, return `false` to prevent the publish */
+// deno-lint-ignore require-await
 export async function prepublish(version: string) {
-  console.log('on prepublish', version)
+  console.log("on prepublish", version);
 }
 
 /** `postpublish` will be invoked after published */
+// deno-lint-ignore require-await
 export async function postpublish(version: string) {
-  console.log('on postpublish', version)
+  console.log("on postpublish", version);
 }
