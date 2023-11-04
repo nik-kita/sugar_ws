@@ -1,11 +1,11 @@
-export const VERSION = "0.1.6";
+export const VERSION = "0.1.7";
 
 /** `prepublish` will be invoked before publish, return `false` to prevent the publish */
 export async function prepublish(version: string): Promise<boolean> {
   const codeTxt = await Deno.readTextFile("mod.ts");
   await Deno.writeTextFile(
     "source-code.md",
-    `${"```ts\n// version:"}${version}\n${codeTxt}${"\n\n```\n"}`,
+    `${"```ts\n// version:"}${version}\n${codeTxt}${"```\n"}`,
   );
 
   return true;
