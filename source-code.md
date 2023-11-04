@@ -1,5 +1,5 @@
 ```ts
-// version:0.1.5
+// version:0.1.6
 /**
  * @description
  * it is actually origin WebSocket
@@ -95,5 +95,6 @@ export class SugarWs extends WebSocket {
     });
   }
 }
+
 
 ```
