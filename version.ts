@@ -1,4 +1,4 @@
-export const VERSION = "0.1.7";
+export const VERSION = "0.1.9";
 
 /** `prepublish` will be invoked before publish, return `false` to prevent the publish */
 export async function prepublish(version: string): Promise<boolean> {

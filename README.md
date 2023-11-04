@@ -69,4 +69,4 @@ ws.send_if_open("hi!"); // will not send because websocket is already closed
 > never do it. In future the additional under-the-hood protections, may be
 > options should be created to handle or auto-handle such situations.
 
-[see code](./source-code.md)
+[see code](https://github.com/nik-kita/sugar_ws/blob/main/source-code.md)
