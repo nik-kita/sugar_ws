@@ -1,9 +1,14 @@
 export const VERSION = "0.1.4";
 
 /** `prepublish` will be invoked before publish, return `false` to prevent the publish */
-// deno-lint-ignore require-await
-export async function prepublish(version: string) {
-  console.log("on prepublish", version);
+export async function prepublish(version: string): Promise<boolean> {
+  const codeTxt = await Deno.readTextFile("mod.ts");
+  await Deno.writeTextFile(
+    "source-code.md",
+    `${"```ts\n// version:"}${version}\n${codeTxt}${"\n```"}`,
+  );
+
+  return true;
 }
 
 /** `postpublish` will be invoked after published */

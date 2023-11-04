@@ -14,18 +14,30 @@ export class SugarWs extends WebSocket {
 - `.once()` this method has the same API as the original `.addEventListener()`
   with only difference that it will auto-remove listener after first call
 - `.wait_for(state: 'open' | 'close')` add more simple control over final states
-  of websocket. So you can `await` for open or close and than do your stuff
+  of websocket. So you can `await` for open or close and then do your stuff
   - important to note that this method only waiting for `open` or `close` states
     but not acting them
   - `.wait_for('close').and_close()` syntax sugar for:
     ```ts
+    await sugar_ws.wait_for("close").and_close();
+    // the same as
     sugar_ws.close();
     await sugar_ws.wait_for("close");
-    // the same as
-    await sugar_ws.wait_for("close").and_close();
-    // BUT NOT AS
-    (await sugar_ws.wait_for("close")).close(); // <= should not work because you wait to DO close only when close happen)))
     ```
+    - be careful:
+      ```ts
+      // this is not the same
+      (await sugar_ws.wait_for("close")).close(); // <= should not work
+      // also not work
+      await sugar_ws.wait_for("close");
+      sugar_ws.close();
+      // last examples should not work because you started to wait
+      // closing before "close" happen)))
+      // and you blocked next line `.close()`
+      // HOWEVER may be your simply waiting that `.close()` is happen somewhere
+      // so in this situation it's ok to wait for this
+      await sugar_ws.wait_for("close");
+      ```
   - in any case be careful with usage of these methods especially in repeated
     scenarios... more tests are needed for this feature
 - `.send_if_open()` will send only if websocket's `readyState` is `OPEN`
@@ -34,32 +46,20 @@ export class SugarWs extends WebSocket {
 ## Example of usage:
 
 ```ts
-import {
-  assert,
-  assertThrows,
-} from "https://deno.land/std@0.205.0/assert/mod.ts";
-import { delay } from "https://deno.land/std@0.205.0/async/delay.ts";
-import { SugarWs } from "./mod.ts";
+import { SugarWs } from "https://deno.land/x/sugar_ws/mod.ts";
 
 const ws = await new SugarWs(`ws://localhost:3333`).wait_for("open");
-assert(ws.readyState === ws.OPEN, '`.wait_for("open")` is not work');
-ws.onmessage = ({ data }) => console.log(data);
+
 ws.send_if_open("ping");
-ws.once("message", ({ data }) => onceMessages.push(data));
-await delay(5_000);
+ws.once(
+  "message",
+  ({ data }) => console.log("may be FIRST but exactly LAST message:", data),
+);
+
+await new Promise<void>((resolve) => setTimeout(resolve, 1000));
 await ws.wait_for("close").and_close();
-assert(
-  ws.readyState === ws.CLOSED,
-  '`.wait_for("close").and_close()` is not working',
-);
-assertThrows(
-  () => ws.send("hi!"),
-  "should not send because ws is closed already",
-);
-assert(
-  new Boolean(ws.send_if_open("hi!")),
-  "ws is close => should not send => no error",
-);
+
+ws.send_if_open("hi!"); // will not send because websocket is already closed
 ```
 
 ### P.S.
@@ -69,4 +69,4 @@ assert(
 > never do it. In future the additional under-the-hood protections, may be
 > options should be created to handle or auto-handle such situations.
 
-[see code](./mod.ts)
+[see code](./source-code.md)
