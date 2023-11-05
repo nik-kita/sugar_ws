@@ -1,3 +1,10 @@
+import { __close } from "./method-functions/__close.method.ts";
+import { __open } from "./method-functions/__open.method.ts";
+import { on } from "./method-functions/on.method.ts";
+import { once } from "./method-functions/once.method.ts";
+import { send_if_open } from "./method-functions/send_if_open.method.ts";
+import { wait_for } from "./method-functions/wait_for_it.method.ts";
+
 /**
  * @description
  * it is actually origin WebSocket
@@ -9,21 +16,22 @@
  * * `.on()` the same as .addEventListener... syntax sugar only
  */
 export class SugarWs extends WebSocket {
+  constructor(...args: ConstructorParameters<typeof WebSocket>) {
+    super(...args);
+
+    this.__open = __open.bind(this);
+    this.__close = __close.bind(this);
+    this.on = on.bind(this);
+    this.once = once.bind(this);
+    this.wait_for = wait_for.bind(this);
+    this.send_if_open = send_if_open.bind(this);
+  }
   /**
    * @description
    * call event listener only first time
    * then remove it
    */
-  once: typeof this.on = (
-    ...[label, ev, options]: Parameters<typeof this.on>
-  ): ReturnType<typeof this.on> => {
-    const once_ev = (_ev: Event) => {
-      if (typeof ev === "function") ev(_ev);
-      else ev.handleEvent(_ev);
-      this.removeEventListener(label, once_ev, options);
-    };
-    this.addEventListener(label, once_ev, options);
-  };
+  declare once: WebSocket["addEventListener"];
   /**
    * @description
    * promise that will
@@ -40,56 +48,22 @@ export class SugarWs extends WebSocket {
    * be careful with usage
    * especially in repeated cases (open, close, open, close... etc.)
    */
-  wait_for(
-    state: "close",
-  ): Promise<SugarWs> & { and_close: () => Promise<SugarWs> };
-  wait_for(state: "open"): Promise<SugarWs>;
-  wait_for(
+  declare wait_for: (
     state: "open" | "close",
-  ):
-    | Promise<SugarWs>
-    | (Promise<SugarWs> & { and_close: () => Promise<SugarWs> }) {
-    const result = state === "open" ? this.#open() : this.#close();
-
-    // sugar
-    if (state === "close") {
-      Object.assign(result, {
-        and_close: () => {
-          this.close();
-
-          return result;
-        },
-      });
-    }
-
-    return result as
-      | Promise<SugarWs>
-      | (Promise<SugarWs> & { and_close: () => Promise<SugarWs> });
-  }
+  ) => typeof state extends "open" ? Promise<SugarWs>
+    : (Promise<SugarWs> & { and_close: () => Promise<SugarWs> });
   /**
    * @description
    * will not send data if readyState !== OPEN
    */
-  send_if_open(
+  declare send_if_open: (
     data: string | ArrayBufferLike | Blob | ArrayBufferView,
-  ): void {
-    if (this.readyState === this.OPEN) super.send(data);
-  }
+  ) => void;
   /**
    * @description
    * the same as the `.addEventListener`
    */
-  on = super.addEventListener;
-  #open(): Promise<SugarWs> {
-    return new Promise((resolve) => {
-      if (this.readyState === this.OPEN) return void resolve(this);
-      this.once("open", () => resolve(this));
-    });
-  }
-  #close(): Promise<SugarWs> {
-    return new Promise((resolve) => {
-      if (this.readyState === this.CLOSED) return void resolve(this);
-      this.addEventListener("close", () => resolve(this));
-    });
-  }
+  declare on: WebSocket["addEventListener"];
+  declare __open: () => Promise<SugarWs>;
+  declare __close: () => Promise<SugarWs>;
 }
