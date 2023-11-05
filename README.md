@@ -9,6 +9,19 @@ export class SugarWs extends WebSocket {
 > So you can see that this websocket is not complicated extension of original
 > browser's (so and **Deno**'s) websocket.
 
+## Updates:
+
+- `2023-11-06`
+  - [x] add static method `sugarize` to upgrade already existed instance of
+        `WebSocket` to `SugarWs`
+    ```ts
+    const constructor_sugar = new SugarWs("ws://localhost:3333");
+    // the same as
+    const from_static_sugar = SugarWs.sugarize(
+      new WebSocket("ws://localhost:3333"),
+    );
+    ```
+
 ## Important improvements:
 
 - `.once()` this method has the same API as the original `.addEventListener()`
@@ -40,6 +53,9 @@ export class SugarWs extends WebSocket {
       ```
   - in any case be careful with usage of these methods especially in repeated
     scenarios... more tests are needed for this feature
+
+## Also improvements, but not so important:
+
 - `.send_if_open()` will send only if websocket's `readyState` is `OPEN`
 - `.on()` alias for original's `.addEventListener()`...so this is sugar only
 
