@@ -7,53 +7,106 @@ import { delay } from "https://deno.land/std@0.205.0/async/delay.ts";
 import { ApplicationCloseEvent } from "https://deno.land/x/oak@v12.6.1/application.ts";
 import { SugarWs } from "./mod.ts";
 
+// TODO find way to use "data provider" pattern in tests with Deno
+
 const gen_log = (prefix: string, margin_right = 0) => (...args: unknown[]) =>
   console.debug(`${" ".repeat(margin_right)}${prefix}:`, ...args);
 
-Deno.test("Ws", async () => {
-  const server = gen_test_ws_server();
+Deno.test({
+  name: "SugarWs",
+}, async (t) => {
+  await t.step("instance created wia constructor", async () => {
+    const server = gen_test_ws_server();
 
-  await server.started;
+    await server.started;
 
-  const ws = await new SugarWs(`ws://localhost:${server.port}`).wait_for(
-    "open",
-  );
-  assert(ws.readyState === ws.OPEN, '`.wait_for("open")` is not work');
-  const wsLog = gen_log("ws", 40);
+    const ws = await new SugarWs(`ws://localhost:${server.port}`).wait_for(
+      "open",
+    );
+    assert(ws.readyState === ws.OPEN, '`.wait_for("open")` is not work');
+    const wsLog = gen_log("ws", 40);
 
-  ws.onerror = (err) => wsLog(err);
-  ws.onclose = () => {
-    wsLog("closed");
-  };
-  ws.onmessage = ({ data }) => wsLog(data);
-  ws.send_if_open("ping");
-
-  const allMessages = [] as MessageEvent["data"][];
-  const onceMessages = [] as MessageEvent["data"][];
-
-  ws.on("message", ({ data }) => {
-    allMessages.push(data);
+    ws.onerror = (err) => wsLog(err);
+    ws.onclose = () => {
+      wsLog("closed");
+    };
+    ws.onmessage = ({ data }) => wsLog(data);
     ws.send_if_open("ping");
+
+    const allMessages = [] as MessageEvent["data"][];
+    const onceMessages = [] as MessageEvent["data"][];
+
+    ws.on("message", ({ data }) => {
+      allMessages.push(data);
+      ws.send_if_open("ping");
+    });
+    ws.once("message", ({ data }) => onceMessages.push(data));
+    await delay(1);
+    await ws.wait_for("close").and_close();
+    assert(
+      ws.readyState === ws.CLOSED,
+      '`.wait_for("close").and_close()` is not working',
+    );
+    assertThrows(
+      () => ws.send("hi!"),
+      "should not send because ws is closed already",
+    );
+    assert(
+      new Boolean(ws.send_if_open("hi!")),
+      "ws is close => should not send => no error",
+    );
+    assert(allMessages.length > 1, "this is important condition for this test");
+    assert(onceMessages.length === 1, "`.once()` is not working");
+    server.stop_signal();
+    await server.listening;
   });
-  ws.once("message", ({ data }) => onceMessages.push(data));
-  await delay(1);
-  await ws.wait_for("close").and_close();
-  assert(
-    ws.readyState === ws.CLOSED,
-    '`.wait_for("close").and_close()` is not working',
-  );
-  assertThrows(
-    () => ws.send("hi!"),
-    "should not send because ws is closed already",
-  );
-  assert(
-    new Boolean(ws.send_if_open("hi!")),
-    "ws is close => should not send => no error",
-  );
-  assert(allMessages.length > 1, "this is important condition for this test");
-  assert(onceMessages.length === 1, "`.once()` is not working");
-  server.stop_signal();
-  await server.listening;
+  await t.step("instance created wia static method", async () => {
+    const server = gen_test_ws_server();
+
+    await server.started;
+
+    const ws = await SugarWs.sugarize(
+      new WebSocket(`ws://localhost:${server.port}`),
+    ).wait_for(
+      "open",
+    );
+    assert(ws.readyState === ws.OPEN, '`.wait_for("open")` is not work');
+    const wsLog = gen_log("ws", 40);
+
+    ws.onerror = (err) => wsLog(err);
+    ws.onclose = () => {
+      wsLog("closed");
+    };
+    ws.onmessage = ({ data }) => wsLog(data);
+    ws.send_if_open("ping");
+
+    const allMessages = [] as MessageEvent["data"][];
+    const onceMessages = [] as MessageEvent["data"][];
+
+    ws.on("message", ({ data }) => {
+      allMessages.push(data);
+      ws.send_if_open("ping");
+    });
+    ws.once("message", ({ data }) => onceMessages.push(data));
+    await delay(1);
+    await ws.wait_for("close").and_close();
+    assert(
+      ws.readyState === ws.CLOSED,
+      '`.wait_for("close").and_close()` is not working',
+    );
+    assertThrows(
+      () => ws.send("hi!"),
+      "should not send because ws is closed already",
+    );
+    assert(
+      new Boolean(ws.send_if_open("hi!")),
+      "ws is close => should not send => no error",
+    );
+    assert(allMessages.length > 1, "this is important condition for this test");
+    assert(onceMessages.length === 1, "`.once()` is not working");
+    server.stop_signal();
+    await server.listening;
+  });
 });
 
 type GenWsServerOptions = {

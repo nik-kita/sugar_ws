@@ -16,6 +16,18 @@ import { wait_for } from "./method-functions/wait_for_it.method.ts";
  * * `.on()` the same as .addEventListener... syntax sugar only
  */
 export class SugarWs extends WebSocket {
+  static sugarize(websocket: WebSocket): SugarWs {
+    const _websocket = websocket as SugarWs;
+    _websocket.__open = __open.bind(_websocket);
+    _websocket.__close = __close.bind(_websocket);
+    _websocket.on = on.bind(_websocket);
+    _websocket.once = once.bind(_websocket);
+    _websocket.wait_for = wait_for.bind(_websocket);
+    _websocket.send_if_open = send_if_open.bind(_websocket);
+
+    return _websocket;
+  }
+
   constructor(...args: ConstructorParameters<typeof WebSocket>) {
     super(...args);
 
