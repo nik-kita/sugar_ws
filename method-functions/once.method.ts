@@ -5,12 +5,12 @@
  */
 export function once(
   this: WebSocket,
-  ...[label, ev, options]: Parameters<WebSocket["addEventListener"]>
+  ...[label, listener, options]: Parameters<WebSocket["addEventListener"]>
 ): ReturnType<WebSocket["addEventListener"]> {
-  const once_ev = (_ev: Event) => {
-    if (typeof ev === "function") ev(_ev);
-    else ev.handleEvent(_ev);
-    (this as WebSocket).removeEventListener(label, once_ev, options);
+  const once_listener = (ev: Event) => {
+    if (typeof listener === "function") listener(ev);
+    else listener.handleEvent(ev);
+    this.removeEventListener(label, once_listener, options);
   };
-  this.addEventListener(label, once_ev, options);
+  this.addEventListener(label, once_listener, options);
 }
