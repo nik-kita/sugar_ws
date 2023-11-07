@@ -70,7 +70,7 @@ export class SugarWs extends WebSocket {
    */
   declare send_if_open: (
     data: string | ArrayBufferLike | Blob | ArrayBufferView,
-  ) => void;
+  ) => boolean;
   /**
    * @description
    * the same as the `.addEventListener`
