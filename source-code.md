@@ -1,5 +1,5 @@
 ```ts
-// version:0.2.3
+// version:0.2.4
 import { __close } from "./method-functions/__close.method.ts";
 import { __open } from "./method-functions/__open.method.ts";
 import { on } from "./method-functions/on.method.ts";
@@ -72,7 +72,7 @@ export class SugarWs extends WebSocket {
    */
   declare send_if_open: (
     data: string | ArrayBufferLike | Blob | ArrayBufferView,
-  ) => void;
+  ) => boolean;
   /**
    * @description
    * the same as the `.addEventListener`
