@@ -1,11 +1,11 @@
 ```ts
-// version:0.2.2
+// version:0.2.3
 import { __close } from "./method-functions/__close.method.ts";
 import { __open } from "./method-functions/__open.method.ts";
 import { on } from "./method-functions/on.method.ts";
 import { once } from "./method-functions/once.method.ts";
 import { send_if_open } from "./method-functions/send_if_open.method.ts";
-import { wait_for } from "./method-functions/wait_for_it.method.ts";
+import { wait_for } from "./method-functions/wait_for.method.ts";
 
 /**
  * @description
