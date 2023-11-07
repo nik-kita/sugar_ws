@@ -11,16 +11,17 @@ export class SugarWs extends WebSocket {
 
 ## Updates:
 
-- `2023-11-06`
-  - [x] add static method `sugarize` to upgrade already existed instance of
-        `WebSocket` to `SugarWs`
-    ```ts
-    const constructor_sugar = new SugarWs("ws://localhost:3333");
-    // the same as
-    const from_static_sugar = SugarWs.sugarize(
-      new WebSocket("ws://localhost:3333"),
-    );
-    ```
+- [x] _2023-11-06_: add static method `sugarize` to upgrade already existed
+      instance of `WebSocket` to `SugarWs`
+  ```ts
+  const constructor_sugar = new SugarWs("ws://localhost:3333");
+  // the same as
+  const from_static_sugar = SugarWs.sugarize(
+    new WebSocket("ws://localhost:3333"),
+  );
+  ```
+- [x] _2023-11-07_: `.send_if_open()` return `boolean` to indicate is message
+      was sen
 
 ## Important improvements:
 
