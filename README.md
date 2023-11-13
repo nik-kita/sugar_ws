@@ -10,6 +10,10 @@ export class SugarWs extends WebSocket {
 > browser's (so and **Deno**'s) websocket.
 
 ## Updates:
+- [x] _2023-11-13_: `.once()` return `() => void` function that will remove listener if it is not already called
+  - description:
+    > to remove simple listeners you should do nothing special - call `.removeEventListener('some-event', your_cb)`
+    > but in case with `.once()` - you can not get `your_cb` in terms that sugar_ws will listened not exactly for it but for it's replaced version... so if you should remove it you probably can call this new return value, it do it for you
 
 - [x] _2023-11-06_: add static method `sugarize` to upgrade already existed
       instance of `WebSocket` to `SugarWs`

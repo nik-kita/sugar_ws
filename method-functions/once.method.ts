@@ -1,7 +1,10 @@
+
 /**
  * @description
  * call event listener only first time
  * then remove it
+ * @returns
+ * return cb for remove this listener if it is not already called
  */
 export function once(
   this: WebSocket,

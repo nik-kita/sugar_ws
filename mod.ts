@@ -42,6 +42,8 @@ export class SugarWs extends WebSocket {
    * @description
    * call event listener only first time
    * then remove it
+   * @returns
+   * cb that will remove this listener if it is not already called
    */
   declare once: WebSocket["addEventListener"];
   /**
