@@ -1,4 +1,3 @@
-
 /**
  * @description
  * call event listener only first time
@@ -6,14 +5,28 @@
  * @returns
  * return cb for remove this listener if it is not already called
  */
-export function once(
+export function once<K extends keyof WebSocketEventMap>(
   this: WebSocket,
-  ...[label, listener, options]: Parameters<WebSocket["addEventListener"]>
-): ReturnType<WebSocket["addEventListener"]> {
-  const once_listener = (ev: Event) => {
-    if (typeof listener === "function") listener(ev);
-    else listener.handleEvent(ev);
+  label: K,
+  listener: K extends "close" ? (ev: CloseEvent) => void
+    : (ev: WebSocketEventMap[K]) => void,
+  options?: AddEventListenerOptions | boolean,
+) {
+  let called = false;
+  const once_listener = (ev: WebSocketEventMap[K]) => {
+    called = true;
+
+    // deno-lint-ignore no-explicit-any
+    listener(ev as any);
+
     this.removeEventListener(label, once_listener, options);
   };
+
   this.addEventListener(label, once_listener, options);
+
+  return () => {
+    if (called) return;
+
+    this.removeEventListener(label, once_listener);
+  };
 }

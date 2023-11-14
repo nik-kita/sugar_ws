@@ -16,24 +16,50 @@ import { SugarWs } from "../mod.ts";
  * be careful with usage
  * especially in repeated cases (open, close, open, close... etc.)
  */
+export function wait_for(this: SugarWs, state: "open"): {
+  on_open: (
+    cb: (ev: WebSocketEventMap["open"]) => void,
+  ) => Promise<SugarWs>;
+} & Promise<SugarWs>;
+
+export function wait_for(
+  this: SugarWs,
+  state: "close",
+): { and_close: () => Promise<SugarWs> } & Promise<SugarWs>;
 export function wait_for(
   this: SugarWs,
   state: "open" | "close",
-): Promise<SugarWs> & { and_close: () => Promise<SugarWs> } {
-  {
-    const result = state === "open" ? this.__open() : this.__close();
-
-    // sugar
-    if (state === "close") {
-      Object.assign(result, {
-        and_close: () => {
-          this.close();
-
-          return result;
-        },
-      });
+):
+  & Promise<SugarWs>
+  & (
+    | {
+      on_open: (
+        cb: (ev: WebSocketEventMap["open"]) => void,
+      ) => Promise<SugarWs>;
     }
+    | { and_close: () => Promise<SugarWs> }
+  ) {
+  const result = state === "open" ? this.__open() : this.__close();
 
-    return result as (Promise<SugarWs> & { and_close: () => Promise<SugarWs> });
+  if (state === "open") {
+    Object.assign(result, {
+      on_open: (cb: (ev: WebSocketEventMap["open"]) => void) => {
+        this.once("open", cb);
+
+        return result;
+      },
+    });
   }
+
+  if (state === "close") {
+    Object.assign(result, {
+      and_close: () => {
+        this.close();
+
+        return result;
+      },
+    });
+  }
+
+  return result as unknown as ReturnType<typeof wait_for>;
 }
