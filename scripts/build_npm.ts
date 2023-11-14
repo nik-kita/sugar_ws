@@ -19,9 +19,10 @@ await build({
   },
   package: {
     // package.json properties
-    name: "nik-kita",
+    name: "sugar_ws",
     version: Deno.args[0],
-    description: "SugarWs",
+    description:
+      "Wrapper around browser's WebSocket for more simple and strict control of readyStates.",
     license: "MIT",
 
     repository: {
