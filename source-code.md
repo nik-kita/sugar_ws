@@ -1,5 +1,5 @@
 ```ts
-// version:0.2.4
+// version:0.3.0
 import { __close } from "./method-functions/__close.method.ts";
 import { __open } from "./method-functions/__open.method.ts";
 import { on } from "./method-functions/on.method.ts";
@@ -22,9 +22,11 @@ export class SugarWs extends WebSocket {
     const _websocket = websocket as SugarWs;
     _websocket.__open = __open.bind(_websocket);
     _websocket.__close = __close.bind(_websocket);
+    _websocket.addEventListener;
     _websocket.on = on.bind(_websocket);
     _websocket.once = once.bind(_websocket);
-    _websocket.wait_for = wait_for.bind(_websocket);
+    // deno-lint-ignore no-explicit-any
+    _websocket.wait_for = wait_for.bind(_websocket) as any;
     _websocket.send_if_open = send_if_open.bind(_websocket);
 
     return _websocket;
@@ -37,15 +39,18 @@ export class SugarWs extends WebSocket {
     this.__close = __close.bind(this);
     this.on = on.bind(this);
     this.once = once.bind(this);
-    this.wait_for = wait_for.bind(this);
+    // deno-lint-ignore no-explicit-any
+    this.wait_for = wait_for.bind(this) as any;
     this.send_if_open = send_if_open.bind(this);
   }
   /**
    * @description
    * call event listener only first time
    * then remove it
+   * @returns
+   * cb that will remove this listener if it is not already called
    */
-  declare once: WebSocket["addEventListener"];
+  declare once: typeof once;
   /**
    * @description
    * promise that will
@@ -62,10 +67,7 @@ export class SugarWs extends WebSocket {
    * be careful with usage
    * especially in repeated cases (open, close, open, close... etc.)
    */
-  declare wait_for: (
-    state: "open" | "close",
-  ) => typeof state extends "open" ? Promise<SugarWs>
-    : (Promise<SugarWs> & { and_close: () => Promise<SugarWs> });
+  declare wait_for: typeof wait_for;
   /**
    * @description
    * will not send data if readyState !== OPEN
