@@ -1,11 +1,9 @@
-```ts
-// version:0.4.0
-import { __close } from "./method-functions/__close.method.ts";
-import { __open } from "./method-functions/__open.method.ts";
-import { on } from "./method-functions/on.method.ts";
-import { once } from "./method-functions/once.method.ts";
-import { send_if_open } from "./method-functions/send_if_open.method.ts";
-import { wait_for } from "./method-functions/wait_for.method.ts";
+import { __close } from "./method-functions/__close.method.js";
+import { __open } from "./method-functions/__open.method.js";
+import { on } from "./method-functions/on.method.js";
+import { once } from "./method-functions/once.method.js";
+import { send_if_open } from "./method-functions/send_if_open.method.js";
+import { wait_for } from "./method-functions/wait_for.method.js";
 
 /**
  * @description
@@ -83,4 +81,3 @@ export class SugarWs extends WebSocket {
   declare __open: () => Promise<SugarWs>;
   declare __close: () => Promise<SugarWs>;
 }
-```

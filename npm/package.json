@@ -1,0 +1,24 @@
+{
+  "module": "./esm/mod.js",
+  "main": "./script/mod.js",
+  "name": "nik-kita",
+  "version": "0.3.2",
+  "description": "SugarWs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nik-kita/sugar_ws.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nik-kita/sugar_ws/issues"
+  },
+  "exports": {
+    ".": {
+      "import": "./esm/mod.js",
+      "require": "./script/mod.js"
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9"
+  }
+}

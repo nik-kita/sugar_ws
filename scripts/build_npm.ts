@@ -5,8 +5,16 @@ await emptyDir("./npm");
 await build({
   entryPoints: ["./mod.ts"],
   outDir: "./npm",
+  test: false,
+  typeCheck: false,
+
+  compilerOptions: {
+    lib: ["DOM"],
+  },
+
   shims: {
     // see JS docs for overview and more options
+    // webSocket: true,
     deno: true,
   },
   package: {
@@ -15,6 +23,7 @@ await build({
     version: Deno.args[0],
     description: "SugarWs",
     license: "MIT",
+
     repository: {
       type: "git",
       url: "git+https://github.com/nik-kita/sugar_ws.git",
