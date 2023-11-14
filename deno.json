@@ -1,3 +1,13 @@
 {
-  "tasks": {}
+  "tasks": {},
+  "lint": {
+    "exclude": [
+      "npm/*"
+    ]
+  },
+  "fmt": {
+    "exclude": [
+      "npm/*"
+    ]
+  }
 }

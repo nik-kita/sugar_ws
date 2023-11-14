@@ -9,8 +9,9 @@ export class SugarWs extends WebSocket {
 > So you can see that this websocket is not complicated extension of original
 > browser's (so and **Deno**'s) websocket.
 
-> This package should work in `browser` (so you can import it from npm's `sugar_ws`) as same as in `Deno` (so you can import it both from `'npm:sugar_ws'` or `https://deno.land/x/sugar_ws/mod.ts`)
-
+> This package should work in `browser` (so you can import it from npm's
+> `sugar_ws`) as same as in `Deno` (so you can import it both from
+> `'npm:sugar_ws'` or `https://deno.land/x/sugar_ws/mod.ts`)
 
 ## Important improvements:
 
@@ -41,6 +42,16 @@ export class SugarWs extends WebSocket {
       // so in this situation it's ok to wait for this
       await sugar_ws.wait_for("close");
       ```
+  - `.wait_for('open').on_open(your_cb: () => void)` syntax sugar for:
+    ```ts
+    await sugar_ws.wait_for("open").on_open(() => console.log("hi!"));
+    // the same as
+    sugar_ws.on("open", () => console.log("hi!"));
+    await sugar_ws.wait_for("open");
+
+    // in case your websocket is already open - the promise with it will resolved at once but of course
+    // your listeners are not called
+    ```
   - in any case be careful with usage of these methods especially in repeated
     scenarios... more tests are needed for this feature
 
@@ -67,6 +78,7 @@ await ws.wait_for("close").and_close();
 
 ws.send_if_open("hi!"); // will not send because websocket is already closed
 ```
+
 ## Updates:
 
 - [x] _2023-11-14_: `.wait_for('open')` has sugar return value
@@ -113,7 +125,8 @@ ws.send_if_open("hi!"); // will not send because websocket is already closed
 [see code](https://github.com/nik-kita/sugar_ws/blob/main/source-code.md)
 
 ## TODO:
+
 - [ ] write more tests
 - [ ] remove test-code from publish or from dist etc...
-- [ ] more strictly analyze Deno|Node differences and update publish-artifacts according to them
- 
+- [ ] more strictly analyze Deno|Node differences and update publish-artifacts
+      according to them

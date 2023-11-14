@@ -1,8 +1,9 @@
 {
   "module": "./esm/mod.js",
   "main": "./script/mod.js",
+  "author": "nik-kita",
   "name": "sugar_ws",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "Wrapper around browser's WebSocket for more simple and strict control of readyStates.",
   "license": "MIT",
   "repository": {

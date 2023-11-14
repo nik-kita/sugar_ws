@@ -19,6 +19,8 @@ await build({
   },
   package: {
     // package.json properties
+    author: "nik-kita",
+
     name: "sugar_ws",
     version: Deno.args[0],
     description:
