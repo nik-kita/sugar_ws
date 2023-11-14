@@ -1,20 +1,32 @@
-export const VERSION = "0.4.0";
+export const VERSION = "0.4.4";
 
 /** `prepublish` will be invoked before publish, return `false` to prevent the publish */
 export async function prepublish(version: string): Promise<boolean> {
   const codeTxt = await Deno.readTextFile("mod.ts");
 
-  const npmLog = new Deno
+  new Deno
     .Command("deno", {
     args: [
       "run",
       "-A",
       `${Deno.cwd()}/scripts/build_npm.ts`,
-      VERSION,
+      version,
     ],
+    stdout: "inherit",
+    stderr: "inherit",
+    stdin: "inherit",
   }).outputSync();
 
-  console.log(npmLog);
+  new Deno
+    .Command("npm", {
+    args: [
+      "publish",
+    ],
+    cwd: `${Deno.cwd()}/npm`,
+    stdout: "inherit",
+    stderr: "inherit",
+    stdin: "inherit",
+  }).outputSync();
 
   await Deno.writeTextFile(
     "source-code.md",
