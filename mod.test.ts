@@ -20,9 +20,13 @@ Deno.test({
 
     await server.started;
 
-    const ws = await new SugarWs(`ws://localhost:${server.port}`).wait_for(
-      "open",
-    );
+    let should_be_one_after_open = 0;
+
+    const ws = await new SugarWs(`ws://localhost:${server.port}`)
+      .wait_for(
+        "open",
+      ).on_open(() => ++should_be_one_after_open);
+    assert(should_be_one_after_open === 1, ".on_open() is not work");
     assert(ws.readyState === ws.OPEN, '`.wait_for("open")` is not work');
     const wsLog = gen_log("ws", 40);
 
@@ -41,6 +45,8 @@ Deno.test({
       ws.send_if_open("ping");
     });
     ws.once("message", ({ data }) => onceMessages.push(data));
+    let should_still_zero = 0;
+    ws.once("message", () => ++should_still_zero)(); // rm once listener
     await delay(1);
     await ws.wait_for("close").and_close();
     assert(
@@ -57,6 +63,7 @@ Deno.test({
     );
     assert(allMessages.length > 1, "this is important condition for this test");
     assert(onceMessages.length === 1, "`.once()` is not working");
+    assert(should_still_zero === 0);
     server.stop_signal();
     await server.listening;
   });

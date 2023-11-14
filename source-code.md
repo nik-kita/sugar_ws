@@ -1,5 +1,5 @@
 ```ts
-// version:0.3.0
+// version:0.3.1
 import { __close } from "./method-functions/__close.method.ts";
 import { __open } from "./method-functions/__open.method.ts";
 import { on } from "./method-functions/on.method.ts";
