@@ -11,7 +11,8 @@ import { SugarWs } from "../mod.ts";
  * the same with `.wait_for('open')` but it is not so often case
  * @tip
  * syntax sugar:
- * `.wait_for('close').and_close()` is most often form of usage
+ *   - `.wait_for('close').and_close()` is most often form of usage
+ *   - `.wait_for('open').on_open(...)` also more often usage form
  * @experimental
  * be careful with usage
  * especially in repeated cases (open, close, open, close... etc.)

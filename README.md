@@ -10,7 +10,21 @@ export class SugarWs extends WebSocket {
 > browser's (so and **Deno**'s) websocket.
 
 ## Updates:
-
+- [x] _2023-11-14_: `.wait_for('open')` has sugar return value
+  ```ts
+  Promise<SugarWs> & { on_open(your_cb() => void) => Promise<SugarWs> }
+  ```
+  - description:
+    > So you can `await` `open` event of websocket and add `onopen` callbacks at once.
+    > Under the hood your listeners will be added firstly and only then `open` command will send
+  - warning:
+    > Do not forget that if socket is already open - promise will be never resolved.
+    > The most expected form of usage:
+      ```ts
+      const sugar = await new SugarWs('ws://localhost:5432')
+        .wait_for('open')
+        .on_open(() => console.log('hi there!'));
+      ```
 - [x] _2023-11-13_: `.once()` return `() => void` function that will remove
       listener if it is not already called
   - description:
