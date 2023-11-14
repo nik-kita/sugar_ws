@@ -21,7 +21,7 @@ export declare function wait_for(this: SugarWs, state: "close"): {
     and_close: () => Promise<SugarWs>;
 } & Promise<SugarWs>;
 type EventListenerAdder = {
-    add_add_listeners: (listeners: ([
+    and_add_listeners: (listeners: ([
         EventListener
     ] | [
         EventListener,

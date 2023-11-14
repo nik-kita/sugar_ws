@@ -42,12 +42,12 @@ export class SugarWs extends WebSocket {
       // so in this situation it's ok to wait for this
       await sugar_ws.wait_for("close");
       ```
-  - `.wait_for('open').add_add_listeners([[() => console.log('hi!')]])` syntax
+  - `.wait_for('open').and_add_listeners([[() => console.log('hi!')]])` syntax
     sugar for:
     ```ts
     await sugar_ws
       .wait_for("open")
-      .add_add_listeners([
+      .and_add_listeners([
         [() => console.log("new message!"))],
         [() => console.log('ok, google!'), 'error'],
         [() => console.log('first message!'), 'message', 'once'],
