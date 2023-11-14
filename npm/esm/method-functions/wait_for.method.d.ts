@@ -21,12 +21,15 @@ export declare function wait_for(this: SugarWs, state: "close"): {
     and_close: () => Promise<SugarWs>;
 } & Promise<SugarWs>;
 type EventListenerAdder = {
-    and_add_listeners_for: (event_dictionary: Partial<{
-        open: (ev: WebSocketEventMap["open"]) => void;
-        close: (ev: WebSocketEventMap["close"]) => void;
-        error: (ev: WebSocketEventMap["error"]) => void;
-        message: (ev: WebSocketEventMap["message"]) => void;
-        first_message: (ev: WebSocketEventMap["message"]) => void;
-    }>) => Promise<SugarWs>;
+    add_add_listeners: (listeners: ([
+        EventListener
+    ] | [
+        EventListener,
+        "message" | "error" | "open" | "close"
+    ] | [
+        EventListener,
+        "message" | "error" | "open" | "close",
+        "on" | "once"
+    ])[]) => Promise<SugarWs>;
 };
 export {};

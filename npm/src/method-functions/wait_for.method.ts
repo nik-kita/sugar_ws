@@ -40,24 +40,11 @@ export function wait_for(
     Object.assign(
       result,
       {
-        and_add_listeners_for: (
-          obj: Partial<{
-            open: (ev: WebSocketEventMap["open"]) => void;
-            close: (ev: WebSocketEventMap["close"]) => void;
-            error: (ev: WebSocketEventMap["error"]) => void;
-            message: (ev: WebSocketEventMap["message"]) => void;
-            first_message: (ev: WebSocketEventMap["message"]) => void;
-          }>,
+        add_add_listeners: (
+          listeners: Parameters<EventListenerAdder["add_add_listeners"]>[0],
         ) => {
-          Object.entries(obj).forEach(([label, cb]) => {
-            if (label === "first_message") {
-              // deno-lint-ignore no-explicit-any
-              this.once("message", cb as any);
-
-              return;
-            }
-            // deno-lint-ignore no-explicit-any
-            this.on(label as keyof WebSocketEventMap, cb as any);
+          listeners.forEach(([cb, label = "message", on_or_once = "on"]) => {
+            this[on_or_once](label as keyof WebSocketEventMap, cb);
           });
 
           return result;
@@ -80,13 +67,20 @@ export function wait_for(
 }
 
 type EventListenerAdder = {
-  and_add_listeners_for: (
-    event_dictionary: Partial<{
-      open: (ev: WebSocketEventMap["open"]) => void;
-      close: (ev: WebSocketEventMap["close"]) => void;
-      error: (ev: WebSocketEventMap["error"]) => void;
-      message: (ev: WebSocketEventMap["message"]) => void;
-      first_message: (ev: WebSocketEventMap["message"]) => void;
-    }>,
+  add_add_listeners: (
+    listeners: (
+      | [
+        EventListener,
+      ]
+      | [
+        EventListener,
+        "message" | "error" | "open" | "close",
+      ]
+      | [
+        EventListener,
+        "message" | "error" | "open" | "close",
+        "on" | "once",
+      ]
+    )[],
   ) => Promise<SugarWs>;
 };

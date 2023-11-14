@@ -42,16 +42,20 @@ export class SugarWs extends WebSocket {
       // so in this situation it's ok to wait for this
       await sugar_ws.wait_for("close");
       ```
-  - `.wait_for('open').and_add_listeners_for({ open: () => console.log('hi!'); })`
-    syntax sugar for:
+  - `.wait_for('open').add_add_listeners([[() => console.log('hi!')]])` syntax
+    sugar for:
     ```ts
     await sugar_ws
       .wait_for("open")
-      .and_add_listeners_for({
-        first_message: () => console.log("hi!")),
-      });
+      .add_add_listeners([
+        [() => console.log("new message!"))],
+        [() => console.log('ok, google!'), 'error'],
+        [() => console.log('first message!'), 'message', 'once'],
+      ]);
     // the same as
-    sugar_ws.once("message", () => console.log("hi!"));
+    sugar_ws.on("message", () => console.log("new message!"));
+    sugar_ws.once("message", () => console.log("first message!"));
+    sugar_ws.on("error", () => console.log("ok, google!"));
     await sugar_ws.wait_for("open");
 
     // in case your websocket is already open - the promise with it will resolved at once but of course
@@ -86,6 +90,8 @@ ws.send_if_open("hi!"); // will not send because websocket is already closed
 
 ## Updates:
 
+- [x] _2023-11-14_: `.wait_for('open')` update return value:
+  > change parameter for `.and_add_event_listeners_for()`
 - [x] _2023-11-14_: `.wait_for('open')` has sugar return value
   ```ts
   Promise<SugarWs> & { on_open(your_cb() => void) => Promise<SugarWs> }
