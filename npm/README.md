@@ -42,11 +42,16 @@ export class SugarWs extends WebSocket {
       // so in this situation it's ok to wait for this
       await sugar_ws.wait_for("close");
       ```
-  - `.wait_for('open').on_open(your_cb: () => void)` syntax sugar for:
+  - `.wait_for('open').and_add_listeners_for({ open: () => console.log('hi!'); })`
+    syntax sugar for:
     ```ts
-    await sugar_ws.wait_for("open").on_open(() => console.log("hi!"));
+    await sugar_ws
+      .wait_for("open")
+      .and_add_listeners_for({
+        first_message: () => console.log("hi!")),
+      });
     // the same as
-    sugar_ws.on("open", () => console.log("hi!"));
+    sugar_ws.once("message", () => console.log("hi!"));
     await sugar_ws.wait_for("open");
 
     // in case your websocket is already open - the promise with it will resolved at once but of course

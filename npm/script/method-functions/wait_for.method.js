@@ -5,8 +5,16 @@ function wait_for(state) {
     const result = state === "open" ? this.__open() : this.__close();
     if (state === "open") {
         Object.assign(result, {
-            on_open: (cb) => {
-                this.once("open", cb);
+            and_add_listeners_for: (obj) => {
+                Object.entries(obj).forEach(([label, cb]) => {
+                    if (label === "first_message") {
+                        // deno-lint-ignore no-explicit-any
+                        this.once("message", cb);
+                        return;
+                    }
+                    // deno-lint-ignore no-explicit-any
+                    this.on(label, cb);
+                });
                 return result;
             },
         });

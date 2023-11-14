@@ -17,12 +17,10 @@ import { SugarWs } from "../mod.js";
  * be careful with usage
  * especially in repeated cases (open, close, open, close... etc.)
  */
-export function wait_for(this: SugarWs, state: "open"): {
-  on_open: (
-    cb: (ev: WebSocketEventMap["open"]) => void,
-  ) => Promise<SugarWs>;
-} & Promise<SugarWs>;
-
+export function wait_for(
+  this: SugarWs,
+  state: "open",
+): EventListenerAdder & Promise<SugarWs>;
 export function wait_for(
   this: SugarWs,
   state: "close",
@@ -33,23 +31,39 @@ export function wait_for(
 ):
   & Promise<SugarWs>
   & (
-    | {
-      on_open: (
-        cb: (ev: WebSocketEventMap["open"]) => void,
-      ) => Promise<SugarWs>;
-    }
+    | EventListenerAdder
     | { and_close: () => Promise<SugarWs> }
   ) {
   const result = state === "open" ? this.__open() : this.__close();
 
   if (state === "open") {
-    Object.assign(result, {
-      on_open: (cb: (ev: WebSocketEventMap["open"]) => void) => {
-        this.once("open", cb);
+    Object.assign(
+      result,
+      {
+        and_add_listeners_for: (
+          obj: Partial<{
+            open: (ev: WebSocketEventMap["open"]) => void;
+            close: (ev: WebSocketEventMap["close"]) => void;
+            error: (ev: WebSocketEventMap["error"]) => void;
+            message: (ev: WebSocketEventMap["message"]) => void;
+            first_message: (ev: WebSocketEventMap["message"]) => void;
+          }>,
+        ) => {
+          Object.entries(obj).forEach(([label, cb]) => {
+            if (label === "first_message") {
+              // deno-lint-ignore no-explicit-any
+              this.once("message", cb as any);
 
-        return result;
-      },
-    });
+              return;
+            }
+            // deno-lint-ignore no-explicit-any
+            this.on(label as keyof WebSocketEventMap, cb as any);
+          });
+
+          return result;
+        },
+      } satisfies EventListenerAdder,
+    );
   }
 
   if (state === "close") {
@@ -64,3 +78,15 @@ export function wait_for(
 
   return result as unknown as ReturnType<typeof wait_for>;
 }
+
+type EventListenerAdder = {
+  and_add_listeners_for: (
+    event_dictionary: Partial<{
+      open: (ev: WebSocketEventMap["open"]) => void;
+      close: (ev: WebSocketEventMap["close"]) => void;
+      error: (ev: WebSocketEventMap["error"]) => void;
+      message: (ev: WebSocketEventMap["message"]) => void;
+      first_message: (ev: WebSocketEventMap["message"]) => void;
+    }>,
+  ) => Promise<SugarWs>;
+};
