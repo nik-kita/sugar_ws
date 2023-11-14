@@ -9,44 +9,8 @@ export class SugarWs extends WebSocket {
 > So you can see that this websocket is not complicated extension of original
 > browser's (so and **Deno**'s) websocket.
 
-## Updates:
+> This package should work in `browser` (so you can import it from npm's `sugar_ws`) as same as in `Deno` (so you can import it both from `'npm:sugar_ws'` or `https://deno.land/x/sugar_ws/mod.ts`)
 
-- [x] _2023-11-14_: `.wait_for('open')` has sugar return value
-  ```ts
-  Promise<SugarWs> & { on_open(your_cb() => void) => Promise<SugarWs> }
-  ```
-  - description:
-    > So you can `await` `open` event of websocket and add `onopen` callbacks at
-    > once. Under the hood your listeners will be added firstly and only then
-    > `open` command will send
-  - warning:
-    > Do not forget that if socket is already open - promise will be never
-    > resolved. The most expected form of usage:
-    ```ts
-    const sugar = await new SugarWs("ws://localhost:5432")
-      .wait_for("open")
-      .on_open(() => console.log("hi there!"));
-    ```
-- [x] _2023-11-13_: `.once()` return `() => void` function that will remove
-      listener if it is not already called
-  - description:
-    > to remove simple listeners you should do nothing special - call
-    > `.removeEventListener('some-event', your_cb)` but in case with `.once()` -
-    > you can not get `your_cb` in terms that sugar_ws will listened not exactly
-    > for it but for it's replaced version... so if you should remove it you
-    > probably can call this new return value, it do it for you
-
-- [x] _2023-11-06_: add static method `sugarize` to upgrade already existed
-      instance of `WebSocket` to `SugarWs`
-  ```ts
-  const constructor_sugar = new SugarWs("ws://localhost:3333");
-  // the same as
-  const from_static_sugar = SugarWs.sugarize(
-    new WebSocket("ws://localhost:3333"),
-  );
-  ```
-- [x] _2023-11-07_: `.send_if_open()` return `boolean` to indicate is message
-      was sen
 
 ## Important improvements:
 
@@ -103,6 +67,41 @@ await ws.wait_for("close").and_close();
 
 ws.send_if_open("hi!"); // will not send because websocket is already closed
 ```
+## Updates:
+
+- [x] _2023-11-14_: `.wait_for('open')` has sugar return value
+  ```ts
+  Promise<SugarWs> & { on_open(your_cb() => void) => Promise<SugarWs> }
+  ```
+  - description:
+    > So you can `await` `open` event of websocket and add `onopen` callbacks at
+    > once. Under the hood your listeners will be added firstly and only then
+    > `open` command will send (if not already sended)
+    ```ts
+    const sugar = await new SugarWs("ws://localhost:5432")
+      .wait_for("open")
+      .on_open(() => console.log("hi there!"));
+    ```
+- [x] _2023-11-13_: `.once()` return `() => void` function that will remove
+      listener if it is not already called
+  - description:
+    > to remove simple listeners you should do nothing special - call
+    > `.removeEventListener('some-event', your_cb)` but in case with `.once()` -
+    > you can not get `your_cb` in terms that sugar_ws will listened not exactly
+    > for it but for it's replaced version... so if you should remove it you
+    > probably can call this new return value, it do it for you
+
+- [x] _2023-11-06_: add static method `sugarize` to upgrade already existed
+      instance of `WebSocket` to `SugarWs`
+  ```ts
+  const constructor_sugar = new SugarWs("ws://localhost:3333");
+  // the same as
+  const from_static_sugar = SugarWs.sugarize(
+    new WebSocket("ws://localhost:3333"),
+  );
+  ```
+- [x] _2023-11-07_: `.send_if_open()` return `boolean` to indicate is message
+      was sen
 
 ### P.S.
 
@@ -112,3 +111,9 @@ ws.send_if_open("hi!"); // will not send because websocket is already closed
 > options should be created to handle or auto-handle such situations.
 
 [see code](https://github.com/nik-kita/sugar_ws/blob/main/source-code.md)
+
+## TODO:
+- [ ] write more tests
+- [ ] remove test-code from publish or from dist etc...
+- [ ] more strictly analyze Deno|Node differences and update publish-artifacts according to them
+ 
