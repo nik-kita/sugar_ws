@@ -22,20 +22,31 @@ export declare function wait_for(this: SugarWs, state: "close"): {
 } & Promise<SugarWs>;
 type EventListenerAdder = {
     and_add_listeners: (cb: (sugar: SugarWs) => ([
-        MessageEvent
+        WebSocket["onmessage"]
     ] | [
-        EventListener,
-        "error" | "open" | "close"
+        WebSocket["onopen"],
+        "open"
     ] | [
-        MessageEvent,
-        "message"
+        WebSocket["onerror"],
+        "error"
     ] | [
-        EventListener,
-        "error" | "open" | "close",
+        WebSocket["close"],
+        "close"
+    ] | [
+        WebSocket["onmessage"],
+        "message",
         "on" | "once"
     ] | [
-        MessageEvent,
-        "message",
+        WebSocket["onopen"],
+        "open",
+        "on" | "once"
+    ] | [
+        WebSocket["onerror"],
+        "error",
+        "on" | "once"
+    ] | [
+        WebSocket["close"],
+        "close",
         "on" | "once"
     ])[]) => Promise<SugarWs>;
 };

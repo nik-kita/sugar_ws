@@ -43,8 +43,9 @@ export function wait_for(
         and_add_listeners: (cb) => {
           cb(this).forEach(([cb, label = "message", on_or_once = "on"]) => {
             this[on_or_once](
-              label as keyof WebSocketEventMap,
-              cb as EventListener,
+              label,
+              cb as typeof label extends "message" ? WebSocket["onmessage"]
+                : EventListener,
             );
           });
 
@@ -71,24 +72,38 @@ type EventListenerAdder = {
   and_add_listeners: (
     cb: (sugar: SugarWs) => (
       | [
-        MessageEvent,
+        WebSocket["onmessage"],
       ]
       | [
-        EventListener,
-        "error" | "open" | "close",
+        WebSocket["onopen"],
+        "open",
       ]
       | [
-        MessageEvent,
+        WebSocket["onerror"],
+        "error",
+      ]
+      | [
+        WebSocket["close"],
+        "close",
+      ]
+      | [
+        WebSocket["onmessage"],
         "message",
-      ]
-      | [
-        EventListener,
-        "error" | "open" | "close",
         "on" | "once",
       ]
       | [
-        MessageEvent,
-        "message",
+        WebSocket["onopen"],
+        "open",
+        "on" | "once",
+      ]
+      | [
+        WebSocket["onerror"],
+        "error",
+        "on" | "once",
+      ]
+      | [
+        WebSocket["close"],
+        "close",
         "on" | "once",
       ]
     )[],
