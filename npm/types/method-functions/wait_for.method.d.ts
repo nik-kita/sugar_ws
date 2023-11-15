@@ -22,13 +22,20 @@ export declare function wait_for(this: SugarWs, state: "close"): {
 } & Promise<SugarWs>;
 type EventListenerAdder = {
     and_add_listeners: (cb: (sugar: SugarWs) => ([
-        EventListener
+        MessageEvent
     ] | [
         EventListener,
-        "message" | "error" | "open" | "close"
+        "error" | "open" | "close"
+    ] | [
+        MessageEvent,
+        "message"
     ] | [
         EventListener,
-        "message" | "error" | "open" | "close",
+        "error" | "open" | "close",
+        "on" | "once"
+    ] | [
+        MessageEvent,
+        "message",
         "on" | "once"
     ])[]) => Promise<SugarWs>;
 };
