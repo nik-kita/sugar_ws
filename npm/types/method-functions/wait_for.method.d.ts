@@ -16,38 +16,11 @@ import { SugarWs } from "../mod.js";
  * be careful with usage
  * especially in repeated cases (open, close, open, close... etc.)
  */
-export declare function wait_for(this: SugarWs, state: "open"): EventListenerAdder & Promise<SugarWs>;
+export declare function wait_for(this: SugarWs, state: "open"): WaitForOpen_and & Promise<SugarWs>;
 export declare function wait_for(this: SugarWs, state: "close"): {
     and_close: () => Promise<SugarWs>;
 } & Promise<SugarWs>;
-type EventListenerAdder = {
-    and_add_listeners: (cb: (sugar: SugarWs) => ([
-        WebSocket["onmessage"]
-    ] | [
-        WebSocket["onopen"],
-        "open"
-    ] | [
-        WebSocket["onerror"],
-        "error"
-    ] | [
-        WebSocket["close"],
-        "close"
-    ] | [
-        WebSocket["onmessage"],
-        "message",
-        "on" | "once"
-    ] | [
-        WebSocket["onopen"],
-        "open",
-        "on" | "once"
-    ] | [
-        WebSocket["onerror"],
-        "error",
-        "on" | "once"
-    ] | [
-        WebSocket["close"],
-        "close",
-        "on" | "once"
-    ])[]) => Promise<SugarWs>;
+type WaitForOpen_and = {
+    and: (cb: (sugar: SugarWs) => unknown) => Promise<SugarWs>;
 };
 export {};

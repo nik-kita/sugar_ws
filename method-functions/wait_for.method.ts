@@ -20,7 +20,7 @@ import { SugarWs } from "../mod.ts";
 export function wait_for(
   this: SugarWs,
   state: "open",
-): EventListenerAdder & Promise<SugarWs>;
+): WaitForOpen_and & Promise<SugarWs>;
 export function wait_for(
   this: SugarWs,
   state: "close",
@@ -31,7 +31,7 @@ export function wait_for(
 ):
   & Promise<SugarWs>
   & (
-    | EventListenerAdder
+    | WaitForOpen_and
     | { and_close: () => Promise<SugarWs> }
   ) {
   const result = state === "open" ? this.__open() : this.__close();
@@ -40,18 +40,12 @@ export function wait_for(
     Object.assign(
       result,
       {
-        and_add_listeners: (cb) => {
-          cb(this).forEach(([cb, label = "message", on_or_once = "on"]) => {
-            this[on_or_once](
-              label,
-              cb as typeof label extends "message" ? WebSocket["onmessage"]
-                : EventListener,
-            );
-          });
+        and: (cb) => {
+          cb(this);
 
           return result;
         },
-      } satisfies EventListenerAdder,
+      } satisfies WaitForOpen_and,
     );
   }
 
@@ -68,44 +62,8 @@ export function wait_for(
   return result as unknown as ReturnType<typeof wait_for>;
 }
 
-type EventListenerAdder = {
-  and_add_listeners: (
-    cb: (sugar: SugarWs) => (
-      | [
-        WebSocket["onmessage"],
-      ]
-      | [
-        WebSocket["onopen"],
-        "open",
-      ]
-      | [
-        WebSocket["onerror"],
-        "error",
-      ]
-      | [
-        WebSocket["close"],
-        "close",
-      ]
-      | [
-        WebSocket["onmessage"],
-        "message",
-        "on" | "once",
-      ]
-      | [
-        WebSocket["onopen"],
-        "open",
-        "on" | "once",
-      ]
-      | [
-        WebSocket["onerror"],
-        "error",
-        "on" | "once",
-      ]
-      | [
-        WebSocket["close"],
-        "close",
-        "on" | "once",
-      ]
-    )[],
+type WaitForOpen_and = {
+  and: (
+    cb: (sugar: SugarWs) => unknown,
   ) => Promise<SugarWs>;
 };

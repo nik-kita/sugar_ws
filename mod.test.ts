@@ -25,11 +25,11 @@ Deno.test({
     const ws = await new SugarWs(`ws://localhost:${server.port}`)
       .wait_for(
         "open",
-      ).and_add_listeners((_) => [[
-        () => void ++should_be_one_after_open,
-        "open",
-        "once",
-      ]]);
+      ).and((sugar) => {
+        sugar.once("open", () => void ++should_be_one_after_open);
+
+        return;
+      });
     assert(should_be_one_after_open === 1, ".on_open() is not work");
     assert(ws.readyState === ws.OPEN, '`.wait_for("open")` is not work');
     const wsLog = gen_log("ws", 40);

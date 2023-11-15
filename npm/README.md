@@ -42,23 +42,23 @@ export class SugarWs extends WebSocket {
       // so in this situation it's ok to wait for this
       await sugar_ws.wait_for("close");
       ```
-  - `.wait_for('open').and_add_listeners([[() => console.log('hi!')]])` syntax
-    sugar for:
+  - `.wait_for('open').and(cb: (ws: SugarWs) => unknown)` syntax sugar for:
     ```ts
-    await sugar_ws
-      .wait_for("open")
-      .and_add_listeners((sugar_ws) => [
-        [() => console.log("new message!"))],
-        [() => sugar_ws.send('ok, google, help me!'), 'error', 'once'],
-      ]);
-    // the same as
-    const sugar_ws = new SugarWs('ws://localhost:5432');
+    const sugar_ws = new SugarWs("ws://localhost:5432");
     sugar_ws.on("message", () => console.log("new message!"));
     sugar_ws.once("error", () => sugar_ws.send("ok, google, help me!"));
     await sugar_ws.wait_for("open");
-
+    // the same as
+    await new SugarWs("ws://localhost:5432")
+      .wait_for("open")
+      .and((s) => {
+        s.on("message", () => console.log("new message!"));
+        s.once("error", () => s.send("ok, google, help me!"));
+      });
     // in case your websocket is already open - the listeners for "open" event will ignored
     ```
+    > so it like `.then()` syntax in `Promise`... Im not sure is it really
+    > handy...
 
 ## Also improvements, but not so important:
 
@@ -86,6 +86,8 @@ ws.send_if_open("hi!"); // will not send because websocket is already closed
 
 ## Updates:
 
+- [x] _2023-11-15_: `.wait_for('open')` simplicity:
+  > after calling `.wait_for('open').and(your_callback)` current version
 - [x] _2023-11-15_: `.wait_for('open')` update return value:
   > change parameter for `.and_add_event_listeners()` so now this is callback
   > that should return array of arrays (in previous version you defined this

@@ -2,10 +2,8 @@ export function wait_for(state) {
     const result = state === "open" ? this.__open() : this.__close();
     if (state === "open") {
         Object.assign(result, {
-            and_add_listeners: (cb) => {
-                cb(this).forEach(([cb, label = "message", on_or_once = "on"]) => {
-                    this[on_or_once](label, cb);
-                });
+            and: (cb) => {
+                cb(this);
                 return result;
             },
         });
