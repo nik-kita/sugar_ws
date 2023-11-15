@@ -47,22 +47,18 @@ export class SugarWs extends WebSocket {
     ```ts
     await sugar_ws
       .wait_for("open")
-      .and_add_listeners([
+      .and_add_listeners((sugar_ws) => [
         [() => console.log("new message!"))],
-        [() => console.log('ok, google!'), 'error'],
-        [() => console.log('first message!'), 'message', 'once'],
+        [() => sugar_ws.send('ok, google, help me!'), 'error', 'once'],
       ]);
     // the same as
+    const sugar_ws = new SugarWs('ws://localhost:5432');
     sugar_ws.on("message", () => console.log("new message!"));
-    sugar_ws.once("message", () => console.log("first message!"));
-    sugar_ws.on("error", () => console.log("ok, google!"));
+    sugar_ws.once("error", () => sugar_ws.send("ok, google, help me!"));
     await sugar_ws.wait_for("open");
 
-    // in case your websocket is already open - the promise with it will resolved at once but of course
-    // your listeners are not called
+    // in case your websocket is already open - the listeners for "open" event will ignored
     ```
-  - in any case be careful with usage of these methods especially in repeated
-    scenarios... more tests are needed for this feature
 
 ## Also improvements, but not so important:
 
@@ -90,6 +86,21 @@ ws.send_if_open("hi!"); // will not send because websocket is already closed
 
 ## Updates:
 
+- [x] _2023-11-15_: `.wait_for('open')` update return value:
+  > change parameter for `.and_add_event_listeners()` so now this is callback
+  > that should return array of arrays (in previous version you defined this
+  > array at once) purposes: with new implementation you have access to
+  > websocket before it open example:
+  ```ts
+  const ws = await new SugarWs(`ws://localhost:${server.port}`)
+    .wait_for(
+      "open",
+    ).and_add_listeners((sugar) => [[
+      () => sugar.send("client is ready!"),
+      "open",
+      "once",
+    ]]);
+  ```
 - [x] _2023-11-14_: `.wait_for('open')` update return value:
   > change parameter for `.and_add_event_listeners_for()`
 - [x] _2023-11-14_: `.wait_for('open')` has sugar return value
@@ -137,7 +148,12 @@ ws.send_if_open("hi!"); // will not send because websocket is already closed
 
 ## TODO:
 
+- [ ] clean documentation
+- [ ] check, fix documentation
 - [ ] write more tests
 - [ ] remove test-code from publish or from dist etc...
 - [ ] more strictly analyze Deno|Node differences and update publish-artifacts
       according to them
+- [x] write tests
+- [ ] more tests!!!
+- [x] npm support `npm install sugar_ws` (for client-browser usage)

@@ -40,10 +40,8 @@ export function wait_for(
     Object.assign(
       result,
       {
-        and_add_listeners: (
-          listeners: Parameters<EventListenerAdder["and_add_listeners"]>[0],
-        ) => {
-          listeners.forEach(([cb, label = "message", on_or_once = "on"]) => {
+        and_add_listeners: (cb) => {
+          cb(this).forEach(([cb, label = "message", on_or_once = "on"]) => {
             this[on_or_once](label as keyof WebSocketEventMap, cb);
           });
 
@@ -68,7 +66,7 @@ export function wait_for(
 
 type EventListenerAdder = {
   and_add_listeners: (
-    listeners: (
+    cb: (sugar: SugarWs) => (
       | [
         EventListener,
       ]

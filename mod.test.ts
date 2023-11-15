@@ -25,7 +25,7 @@ Deno.test({
     const ws = await new SugarWs(`ws://localhost:${server.port}`)
       .wait_for(
         "open",
-      ).and_add_listeners([[
+      ).and_add_listeners((_) => [[
         () => void ++should_be_one_after_open,
         "open",
         "once",
