@@ -41,7 +41,7 @@ export function wait_for(
       result,
       {
         and: (cb) => {
-          cb(this);
+          cb.call(this, this);
 
           return result;
         },

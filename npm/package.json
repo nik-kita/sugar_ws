@@ -4,7 +4,7 @@
   "types": "./types/mod.d.ts",
   "author": "nik-kita",
   "name": "sugar_ws",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Wrapper around browser's WebSocket for more simple and strict control of readyStates.",
   "license": "MIT",
   "repository": {

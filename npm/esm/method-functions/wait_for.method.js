@@ -3,7 +3,7 @@ export function wait_for(state) {
     if (state === "open") {
         Object.assign(result, {
             and: (cb) => {
-                cb(this);
+                cb.call(this, this);
                 return result;
             },
         });
