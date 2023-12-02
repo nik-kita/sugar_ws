@@ -85,7 +85,14 @@ ws.send_if_open("hi!"); // will not send because websocket is already closed
 ```
 
 ## Updates:
-
+- [x] _2023-12-02_: `using` feature:
+  > implement `[Symbol.asyncDispose]` method so now
+  > you can create sugar_ws instance via `using`
+    ```ts
+    await using sugar = new SugarWs('ws://localhost:3000');
+    ```
+    ### P.S.
+    > Explanation: with `using` keyword instead of `let` or `const`, the sugar_ws instance will be automatically closed when you will loose reference on it (or +/- something like that... read typescript documentation about `using`)
 - [x] _2023-11-15_: `.wait_for('open')` simplicity:
   > after calling `.wait_for('open').and(your_callback)` current version
 - [x] _2023-11-15_: `.wait_for('open')` update return value:

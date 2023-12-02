@@ -1,5 +1,5 @@
 ```ts
-// version:0.5.1
+// version:0.8.0
 import { __close } from "./method-functions/__close.method.ts";
 import { __open } from "./method-functions/__open.method.ts";
 import { on } from "./method-functions/on.method.ts";
@@ -82,5 +82,23 @@ export class SugarWs extends WebSocket {
   declare on: WebSocket["addEventListener"];
   declare __open: () => Promise<SugarWs>;
   declare __close: () => Promise<SugarWs>;
+
+  async [Symbol.asyncDispose]() {
+    if (this.readyState === WebSocket.CLOSING) {
+      await this.wait_for("close");
+    }
+
+    if (this.readyState === WebSocket.CLOSED) return;
+
+    if (this.readyState === WebSocket.CONNECTING) {
+      await this.wait_for("open");
+    }
+
+    await this.wait_for("close").and_close();
+  }
+  [Symbol.dispose] = () => {
+    if ([WebSocket.CLOSED, WebSocket.CLOSING].includes(this.readyState as 3 | 2)) return;
+    this.close();
+  };
 }
 ```

@@ -1,3 +1,4 @@
+var _a;
 import { __close } from "./method-functions/__close.method.js";
 import { __open } from "./method-functions/__open.method.js";
 import { on } from "./method-functions/on.method.js";
@@ -29,6 +30,16 @@ export class SugarWs extends WebSocket {
     }
     constructor(...args) {
         super(...args);
+        Object.defineProperty(this, _a, {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: () => {
+                if ([WebSocket.CLOSED, WebSocket.CLOSING].includes(this.readyState))
+                    return;
+                this.close();
+            }
+        });
         this.__open = __open.bind(this);
         this.__close = __close.bind(this);
         this.on = on.bind(this);
@@ -37,4 +48,16 @@ export class SugarWs extends WebSocket {
         this.wait_for = wait_for.bind(this);
         this.send_if_open = send_if_open.bind(this);
     }
+    async [Symbol.asyncDispose]() {
+        if (this.readyState === WebSocket.CLOSING) {
+            await this.wait_for("close");
+        }
+        if (this.readyState === WebSocket.CLOSED)
+            return;
+        if (this.readyState === WebSocket.CONNECTING) {
+            await this.wait_for("open");
+        }
+        await this.wait_for("close").and_close();
+    }
 }
+_a = Symbol.dispose;

@@ -118,6 +118,45 @@ Deno.test({
     server.stop_signal();
     await server.listening;
   });
+  await t.step(
+    'check Symbol.asyncDispose method for "using" feature',
+    async (tt) => {
+      await tt.step("dispose at once", async () => {
+        (async () => {
+          await using s = new SugarWs("ws://localhost");
+          console.log("hi");
+          s;
+        })();
+        await delay(1);
+      });
+
+      await tt.step("dispose after open", async () => {
+        const server = gen_test_ws_server();
+
+        await server.started;
+        let readyState: any;
+        await (async () => {
+          await using ws = new SugarWs(`ws://localhost:${server.port}`);
+
+          return new Promise<void>((resolve) => {
+            ws.on("open", () => {
+              resolve();
+              console.log("open");
+            });
+            ws.on("close", () => {
+              readyState = ws.readyState;
+            });
+          });
+        })();
+        server.stop_signal();
+        await server.listening;
+        assert(
+          readyState === WebSocket.CLOSED,
+          "using did not change readyState to CLOSED",
+        );
+      });
+    },
+  );
 });
 
 type GenWsServerOptions = {

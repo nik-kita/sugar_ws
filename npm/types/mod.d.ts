@@ -50,4 +50,6 @@ export declare class SugarWs extends WebSocket {
     on: WebSocket["addEventListener"];
     __open: () => Promise<SugarWs>;
     __close: () => Promise<SugarWs>;
+    [Symbol.asyncDispose](): Promise<void>;
+    [Symbol.dispose]: () => void;
 }

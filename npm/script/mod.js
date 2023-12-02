@@ -1,4 +1,5 @@
 "use strict";
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SugarWs = void 0;
 const __close_method_js_1 = require("./method-functions/__close.method.js");
@@ -32,6 +33,16 @@ class SugarWs extends WebSocket {
     }
     constructor(...args) {
         super(...args);
+        Object.defineProperty(this, _a, {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: () => {
+                if ([WebSocket.CLOSED, WebSocket.CLOSING].includes(this.readyState))
+                    return;
+                this.close();
+            }
+        });
         this.__open = __open_method_js_1.__open.bind(this);
         this.__close = __close_method_js_1.__close.bind(this);
         this.on = on_method_js_1.on.bind(this);
@@ -40,5 +51,17 @@ class SugarWs extends WebSocket {
         this.wait_for = wait_for_method_js_1.wait_for.bind(this);
         this.send_if_open = send_if_open_method_js_1.send_if_open.bind(this);
     }
+    async [Symbol.asyncDispose]() {
+        if (this.readyState === WebSocket.CLOSING) {
+            await this.wait_for("close");
+        }
+        if (this.readyState === WebSocket.CLOSED)
+            return;
+        if (this.readyState === WebSocket.CONNECTING) {
+            await this.wait_for("open");
+        }
+        await this.wait_for("close").and_close();
+    }
 }
 exports.SugarWs = SugarWs;
+_a = Symbol.dispose;
