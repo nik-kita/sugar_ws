@@ -3,7 +3,7 @@ import { build, emptyDir } from "https://deno.land/x/dnt@0.38.1/mod.ts";
 await emptyDir("./npm");
 
 await build({
-  entryPoints: ["./mod.ts"],
+  entryPoints: ["./mod.ts", "./react.ts"],
   outDir: "./npm",
   declaration: "separate",
   test: false,

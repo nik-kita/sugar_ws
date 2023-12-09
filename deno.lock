@@ -2,6 +2,7 @@
   "version": "3",
   "packages": {
     "specifiers": {
+      "npm:preact": "npm:preact@10.19.2",
       "npm:react": "npm:react@18.2.0"
     },
     "npm": {
@@ -14,6 +15,10 @@
         "dependencies": {
           "js-tokens": "js-tokens@4.0.0"
         }
+      },
+      "preact@10.19.2": {
+        "integrity": "sha512-UA9DX/OJwv6YwP9Vn7Ti/vF80XL+YA5H2l7BpCtUr3ya8LWHFzpiO5R+N7dN16ujpIxhekRFuOOF82bXX7K/lg==",
+        "dependencies": {}
       },
       "react@18.2.0": {
         "integrity": "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==",

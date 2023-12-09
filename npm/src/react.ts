@@ -1,10 +1,10 @@
-// @deno-types="npm:@types/react"
+
 import {
   type useEffect as react_useEffect,
   type useRef as react_useRef,
   type useState as react_useState,
-} from "npm:react";
-import { SugarWs } from "./mod.ts";
+} from "react";
+import { SugarWs } from "./mod.js";
 
 const {
   CLOSING,

@@ -9,10 +9,5 @@
     "exclude": [
       "npm/*"
     ]
-  },
-  "imports": {
-    "preact/hooks": "npm:preact/hooks",
-    "@types/react": "npm:@types/react",
-    "react": "npm:react"
   }
 }
