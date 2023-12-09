@@ -95,7 +95,9 @@ export class SugarWs extends WebSocket {
     await this.wait_for("close").and_close();
   }
   [Symbol.dispose] = () => {
-    if ([WebSocket.CLOSED, WebSocket.CLOSING].includes(this.readyState as 3 | 2)) return;
+    if (
+      [WebSocket.CLOSED, WebSocket.CLOSING].includes(this.readyState as 3 | 2)
+    ) return;
     this.close();
   };
 }

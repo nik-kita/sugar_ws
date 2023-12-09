@@ -85,14 +85,19 @@ ws.send_if_open("hi!"); // will not send because websocket is already closed
 ```
 
 ## Updates:
+  [x] _2023-12-09_: `useWs` hook for `react` or `preact`:
+    > now awailable as return value from `get_useWs`
+    > // TODO add tests, documentation
 - [x] _2023-12-02_: `using` feature:
-  > implement `[Symbol.asyncDispose]` method so now
-  > you can create sugar_ws instance via `using`
-    ```ts
-    await using sugar = new SugarWs('ws://localhost:3000');
-    ```
-    ### P.S.
-    > Explanation: with `using` keyword instead of `let` or `const`, the sugar_ws instance will be automatically closed when you will loose reference on it (or +/- something like that... read typescript documentation about `using`)
+  > implement `[Symbol.asyncDispose]` method so now you can create sugar_ws
+  > instance via `using`
+  ```ts
+  await using sugar = new SugarWs("ws://localhost:3000");
+  ```
+  ### P.S.
+  > Explanation: with `using` keyword instead of `let` or `const`, the sugar_ws
+  > instance will be automatically closed when you will loose reference on it
+  > (or +/- something like that... read typescript documentation about `using`)
 - [x] _2023-11-15_: `.wait_for('open')` simplicity:
   > after calling `.wait_for('open').and(your_callback)` current version
 - [x] _2023-11-15_: `.wait_for('open')` update return value:
@@ -154,15 +159,3 @@ ws.send_if_open("hi!"); // will not send because websocket is already closed
 > options should be created to handle or auto-handle such situations.
 
 [see code](https://github.com/nik-kita/sugar_ws/blob/main/source-code.md)
-
-## TODO:
-
-- [ ] clean documentation
-- [ ] check, fix documentation
-- [ ] write more tests
-- [ ] remove test-code from publish or from dist etc...
-- [ ] more strictly analyze Deno|Node differences and update publish-artifacts
-      according to them
-- [x] write tests
-- [ ] more tests!!!
-- [x] npm support `npm install sugar_ws` (for client-browser usage)

@@ -122,6 +122,7 @@ Deno.test({
     'check Symbol.asyncDispose method for "using" feature',
     async (tt) => {
       await tt.step("dispose at once", async () => {
+        // deno-lint-ignore require-await
         (async () => {
           await using s = new SugarWs("ws://localhost");
           console.log("hi");
@@ -134,7 +135,9 @@ Deno.test({
         const server = gen_test_ws_server();
 
         await server.started;
+        // deno-lint-ignore no-explicit-any
         let readyState: any;
+        // deno-lint-ignore require-await
         await (async () => {
           await using ws = new SugarWs(`ws://localhost:${server.port}`);
 
@@ -148,12 +151,12 @@ Deno.test({
             });
           });
         })();
-        server.stop_signal();
-        await server.listening;
         assert(
           readyState === WebSocket.CLOSED,
           "using did not change readyState to CLOSED",
         );
+        server.stop_signal();
+        await server.listening;
       });
     },
   );
