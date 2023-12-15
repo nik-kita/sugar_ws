@@ -85,9 +85,10 @@ ws.send_if_open("hi!"); // will not send because websocket is already closed
 ```
 
 ## Updates:
-  [x] _2023-12-09_: `useWs` hook for `react` or `preact`:
-    > now awailable as return value from `get_useWs`
-    > // TODO add tests, documentation
+
+[x] _2023-12-09_: `useWs` hook for `react` or `preact`: > now awailable as
+return value from `get_useWs` > // TODO add tests, documentation
+
 - [x] _2023-12-02_: `using` feature:
   > implement `[Symbol.asyncDispose]` method so now you can create sugar_ws
   > instance via `using`
