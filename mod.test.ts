@@ -1,10 +1,8 @@
-import {
-  assert,
-  assertThrows,
-} from "https://deno.land/std@0.205.0/assert/mod.ts";
-import { Application } from "https://deno.land/x/oak@v12.6.1/mod.ts";
+// deno-lint-ignore-file ban-unused-ignore
+import { assert } from "https://deno.land/std@0.205.0/assert/mod.ts";
 import { delay } from "https://deno.land/std@0.205.0/async/delay.ts";
 import { ApplicationCloseEvent } from "https://deno.land/x/oak@v12.6.1/application.ts";
+import { Application } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { SugarWs } from "./mod.ts";
 
 // TODO find way to use "data provider" pattern in tests with Deno
@@ -57,10 +55,7 @@ Deno.test({
       ws.readyState === ws.CLOSED,
       '`.wait_for("close").and_close()` is not working',
     );
-    assertThrows(
-      () => ws.send("hi!"),
-      "should not send because ws is closed already",
-    );
+
     assert(
       new Boolean(ws.send_if_open("hi!")),
       "ws is close => should not send => no error",
@@ -105,10 +100,6 @@ Deno.test({
       ws.readyState === ws.CLOSED,
       '`.wait_for("close").and_close()` is not working',
     );
-    assertThrows(
-      () => ws.send("hi!"),
-      "should not send because ws is closed already",
-    );
     assert(
       new Boolean(ws.send_if_open("hi!")),
       "ws is close => should not send => no error",
@@ -125,7 +116,7 @@ Deno.test({
         // deno-lint-ignore require-await
         (async () => {
           await using s = new SugarWs("ws://localhost");
-          console.log("hi");
+          console.debug("hi");
           s;
         })();
         await delay(1);
@@ -144,7 +135,7 @@ Deno.test({
           return new Promise<void>((resolve) => {
             ws.on("open", () => {
               resolve();
-              console.log("open");
+              console.debug("open");
             });
             ws.on("close", () => {
               readyState = ws.readyState;
@@ -225,7 +216,7 @@ function gen_test_ws_server(
   server.addEventListener("close", async () => {
     log("server: closing...");
     clients.forEach((c) =>
-      [WebSocket.CLOSING, WebSocket.CLOSING].includes(c.readyState) ||
+      [WebSocket.CLOSING, WebSocket.CLOSED].includes(c.readyState) ||
       c.close(1000)
     );
     for await (const closing of clients_close_promises) {

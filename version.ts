@@ -39,5 +39,5 @@ export async function prepublish(version: string): Promise<boolean> {
 /** `postpublish` will be invoked after published */
 // deno-lint-ignore require-await
 export async function postpublish(version: string) {
-  console.log("on postpublish", version);
+  console.info("on postpublish", version);
 }

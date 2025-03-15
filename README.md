@@ -45,14 +45,14 @@ export class SugarWs extends WebSocket {
   - `.wait_for('open').and(cb: (ws: SugarWs) => unknown)` syntax sugar for:
     ```ts
     const sugar_ws = new SugarWs("ws://localhost:5432");
-    sugar_ws.on("message", () => console.log("new message!"));
+    sugar_ws.on("message", () => console.info("new message!"));
     sugar_ws.once("error", () => sugar_ws.send("ok, google, help me!"));
     await sugar_ws.wait_for("open");
     // the same as
     await new SugarWs("ws://localhost:5432")
       .wait_for("open")
       .and((s) => {
-        s.on("message", () => console.log("new message!"));
+        s.on("message", () => console.info("new message!"));
         s.once("error", () => s.send("ok, google, help me!"));
       });
     // in case your websocket is already open - the listeners for "open" event will ignored
@@ -75,7 +75,7 @@ const ws = await new SugarWs(`ws://localhost:3333`).wait_for("open");
 ws.send_if_open("ping");
 ws.once(
   "message",
-  ({ data }) => console.log("may be FIRST but exactly LAST message:", data),
+  ({ data }) => console.info("may be FIRST but exactly LAST message:", data),
 );
 
 await new Promise<void>((resolve) => setTimeout(resolve, 1000));
@@ -129,7 +129,7 @@ return value from `get_useWs` > // TODO add tests, documentation
     ```ts
     const sugar = await new SugarWs("ws://localhost:5432")
       .wait_for("open")
-      .on_open(() => console.log("hi there!"));
+      .on_open(() => console.info("hi there!"));
     ```
 - [x] _2023-11-13_: `.once()` return `() => void` function that will remove
       listener if it is not already called
